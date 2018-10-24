@@ -13,6 +13,8 @@ def translate_to_order(text):
     return y
 
 
-def post_order(order):
-    r = requests.post("http://127.0.0.1:3000/order", data=order)
-    return r
+def post_order(order, connected):
+    if connected:
+        r = requests.post("http://127.0.0.1:3000/order", data=order)
+        return r
+    return "pas connecté à kraken"

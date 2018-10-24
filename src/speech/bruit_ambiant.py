@@ -5,6 +5,9 @@ import audioop
 
 
 def audio_int(num_samples=50):
+
+    return 3000
+
     """ Gets average speech intensity of your mic sound. You can use it to get
         average intensities while you're talking and/or silent. The average
         is the avg of the 20% largest intensities recorded.
@@ -28,4 +31,4 @@ def audio_int(num_samples=50):
     stream.close()
     p.terminate()
     # 2400 c'est pas mal au micro
-    return r
+    # return r

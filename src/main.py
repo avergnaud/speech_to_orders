@@ -1,3 +1,4 @@
+import kraken_connexion
 import speech.bruit_ambiant
 import speech.file_util
 import speech.google_util
@@ -7,11 +8,13 @@ import os
 import audioop
 import math
 from collections import deque
+import asyncio
+import websockets
 import orders.order_util
 
 
 THRESHOLD = int(speech.bruit_ambiant.audio_int()) + speech.constantes.SEUIL_INTENSITE_THRESHOLD  # 2500 The threshold intensity that defines silence
-                  # and noise signal (an int. lower than THRESHOLD is silence).
+                  # and noise signal (an int. lower than THRESHOLD is silence).s
 
 
 def listen_for_speech(num_phrases=-1):
@@ -22,6 +25,8 @@ def listen_for_speech(num_phrases=-1):
     how many phrases to process before finishing the listening process
     (-1 for infinite).
     """
+
+    yield "INIT PREMIER MESSAGE WEBSOCKET"
 
     # Open stream
     p = pyaudio.PyAudio()
@@ -65,8 +70,9 @@ def listen_for_speech(num_phrases=-1):
             if num_phrases == -1:
                 print("Response", r)
                 order_json_payload = orders.order_util.translate_to_order(r)
-                order_response = orders.order_util.post_order(order_json_payload)
+                order_response = orders.order_util.post_order(order_json_payload, kraken_connexion.on)
                 print(order_response)
+                yield r
             else:
                 response.append(r)
             # Remove temp file. Comment line to review.
@@ -86,8 +92,6 @@ def listen_for_speech(num_phrases=-1):
     print("* Done recording")
     stream.close()
     p.terminate()
-
-    return response
 
 
 if __name__ == '__main__' :
